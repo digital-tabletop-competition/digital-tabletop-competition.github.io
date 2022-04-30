@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DTC: Runner guide</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <a href="index.html">
+            <img src="logo.webp" alt="DTC Logo">
+        </a>
+        <h1>Runner guide</h1>
+    </header>
+
+    <p>
+        We provide you with an executable <span class="sc">jar</span> file which can be used to test and visualize your submissions while you work on them.
+        You need Java 8 or 11 to run it (the runner does <i>not</i> work with any other version). You can run the game runner from the command line using <code>java -jar runner.jar &lt;args&gt;</code>.
+        Running the jar without any additional arguments will result in the following instruction message:
+    </p>
+    <p>
+        <div class="code">
+            DTC Game Runner<br>
+            <br>
+            Usage:<br>
+            &nbsp;&nbsp;java -jar runner.jar &lt;submission1&gt; &lt;submission2&gt; [--seed &lt;seed&gt;] [--file &lt;file&gt; | --port &lt;port&gt;]<br>
+            &nbsp;&nbsp;java -jar runner.jar &lt;game result&gt; [--port &lt;port&gt;]<br>
+            &nbsp;&nbsp;java -jar runner.jar --help<br>
+            <br>
+            Options:<br>
+            &nbsp;&nbsp;-s &lt;seed&gt;, --seed &lt;seed&gt;&nbsp;&nbsp;Specify the seed when running the game.<br>
+            &nbsp;&nbsp;-f &lt;file&gt;, --file &lt;file&gt;&nbsp;&nbsp;Specify a file to store the game result at.<br>
+            &nbsp;&nbsp;-p &lt;port&gt;, --port &lt;port&gt;&nbsp;&nbsp;Specify the port for the local visualization web server.<br>
+            &nbsp;&nbsp;-h --help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show this information.
+        </div>
+    </p>
+    <p>
+        The <span class="sc">jar</span> can be used to perform multiple tasks.
+        When specifying two submission arguments (which are paths to submission source files), it will compile the submissions and run a game between the two submissions.
+        The submissions can point to the same file, in which case two duplicates of the bot will play against each other.
+        The <a href="https://en.wikipedia.org/wiki/Random_seed" target="_blank">seed</a> that is used for this match is random unless explicitly specified using <code>--seed</code>.
+        The result of the game is then further processed by either writing it to a file (specified by <code>--file</code>) or starting a local web server.
+        This local web server is used to visualize the result recently generated. It will start on the specified port or on 8080 (the default). Immediately after, this visualization is opened in your browser.
+        A stored game result file can later be viewed using the runner by specifying the game result file as argument, which will open the same local web server.
+        To interrupt the process and stop the web server you can use the key combination <code>ctrl+c</code> (Windows) or <code>command+.</code> (MAC).
+    </p>
+    <p>
+        Java may print some warnings about illegal reflective access; these can be ignored.
+    </p>
+    <p>
+        <i>The runner was built using the <a href="https://www.codingame.com/playgrounds/25775/codingame-sdk-documentation" target="_blank">CodinGame SDK</a> (<a href="license-codingame.txt" target="_blank">license</a>).</i>
+    </p>
+
+    <h2>Example usage</h2>
+    <p>
+        <span class="code">java -jar runner.jar Agent1.java Agent2.py -s 12 -p 8000</span>:
+        Compiles the Java submission <samp>Agent1</samp> and Python submission <samp>Agent2</samp>. Plays a game using seed 12 and visualizes the result on port 8000.
+    </p>
+    <p>
+        <span class="code">java -jar runner.jar Agent1 Agent2.pyc -f game.json</span>:
+        If <samp>Agent1</samp> is a directory consisting of compiled Java class files, this uses the compiled Java code and compiled Python code to play a match on a random seed and stores the result in <code>game.json</code>.
+    </p>
+    <p>
+        <span class="code">java -jar runner.jar game.json</span>:
+        Reads the game result stored in <code>game.json</code> and opens a local web server using the default port 8080 to visualize the result.
+    </p>
+
+    <h2>Configuration</h2>
+    <p>
+        The runner makes use of a configuration file <code>runner-config.json</code> which it will automatically generate if not yet present.
+        Generally, it can be left untouched.
+        It specifies the command line commands that are used to compile and run submissions.
+        If your .NET, JDK, or Python installation is located at non-standard locations you can edit these in the configuration.
+        An example of a configuration that uses a Python installation provided by Anaconda 3 is shown below.
+    </p>
+    <p>
+    <div class="code">
+        {<br>
+        &nbsp;&nbsp;"csharp-compile": [<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;"dotnet new console -f net6.0 --force -o $dir",<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;"dotnet build -c Release $dir"<br>
+        &nbsp;&nbsp;],<br>
+        &nbsp;&nbsp;"csharp-run": "dotnet run -c Release --no-build --project $dir",<br>
+        &nbsp;&nbsp;"java-compile": "javac $source -d $dir",<br>
+        &nbsp;&nbsp;"java-run": "java -cp $classpath $main",<br>
+        &nbsp;&nbsp;"python-compile": "C:\\ProgramData\\Anaconda3\\python -m py_compile $source",<br>
+        &nbsp;&nbsp;"python-run": "C:\\ProgramData\\Anaconda3\\python $file"<br>
+        }
+    </div>
+    </p>
+
+</body>
+</html>
