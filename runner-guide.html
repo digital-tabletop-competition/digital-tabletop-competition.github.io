@@ -55,12 +55,12 @@
 
     <h2>Example usage</h2>
     <p>
-        <span class="code">java -jar runner.jar Agent1.java Agent2.py -s 12 -p 8000</span>:
-        Compiles the Java submission <samp>Agent1</samp> and Python submission <samp>Agent2</samp>. Plays a game using seed 12 and visualizes the result on port 8000.
+        <span class="code">java -jar runner.jar JavaAgent.java python_agent.py -s 12 -p 8000</span>:
+        Compiles the Java submission <samp>JavaAgent</samp> and Python submission <samp>python_agent</samp>. Plays a game using seed 12 and visualizes the result on port 8000.
     </p>
     <p>
-        <span class="code">java -jar runner.jar Agent1 Agent2.pyc -f game.json</span>:
-        If <samp>Agent1</samp> is a directory consisting of compiled Java class files, this uses the compiled Java code and compiled Python code to play a match on a random seed and stores the result in <code>game.json</code>.
+        <span class="code">java -jar runner.jar JavaAgent python_agent.pyc -f game.json</span>:
+        If <samp>JavaAgent</samp> is a directory consisting of compiled Java class files and <samp>python_agent.pyc</samp> is a compiled Python submission, the runner plays a match between them on a random seed and stores the result in <code>game.json</code>.
     </p>
     <p>
         <span class="code">java -jar runner.jar game.json</span>:
