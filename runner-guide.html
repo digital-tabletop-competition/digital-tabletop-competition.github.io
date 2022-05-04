@@ -17,19 +17,20 @@
 
     <p>
         We provide you with an executable <span class="sc">jar</span> file which can be used to test and visualize your submissions while you work on them.
-        You need Java 8 or 11 to run it (the runner does <i>not</i> work with any other version). You can run the game runner from the command line using <code>java -jar runner.jar &lt;args&gt;</code>.
+        You need <a href="https://www.oracle.com/java/technologies/downloads/#java8" target="_blank">Java 8</a> (or 11) to run it (the runner does <i>not</i> work with any other version). You can run the game runner from the command line using <code>java -jar runner.jar &lt;args&gt;</code>.
         Running the jar without any additional arguments will result in the following instruction message:
     </p>
     <div class="code">
         DTC Game Runner<br>
         <br>
         Usage:<br>
-        &nbsp;&nbsp;java -jar runner.jar &lt;submission1&gt; &lt;submission2&gt; [--seed &lt;seed&gt;] [--file &lt;file&gt; | --port &lt;port&gt;]<br>
+        &nbsp;&nbsp;java -jar runner.jar &lt;submission1&gt; &lt;submission2&gt; [--seed &lt;seed&gt;] [--time &lt;time&gt;] [--file &lt;file&gt; | --port &lt;port&gt;]<br>
         &nbsp;&nbsp;java -jar runner.jar &lt;game result&gt; [--port &lt;port&gt;]<br>
         &nbsp;&nbsp;java -jar runner.jar --help<br>
         <br>
         Options:<br>
         &nbsp;&nbsp;-s &lt;seed&gt;, --seed &lt;seed&gt;&nbsp;&nbsp;Specify the seed when running the game.<br>
+        &nbsp;&nbsp;-t &lt;time&gt;, --time &lt;time&gt;&nbsp;&nbsp;Specify the total time limit per bot in milliseconds.<br>
         &nbsp;&nbsp;-f &lt;file&gt;, --file &lt;file&gt;&nbsp;&nbsp;Specify a file to store the game result at.<br>
         &nbsp;&nbsp;-p &lt;port&gt;, --port &lt;port&gt;&nbsp;&nbsp;Specify the port for the local visualization web server.<br>
         &nbsp;&nbsp;-h --help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show this information.
@@ -38,7 +39,8 @@
         The <span class="sc">jar</span> can be used to perform multiple tasks.
         When specifying two submission arguments (which are paths to submission source files), it will compile the submissions and run a game between the two submissions.
         The submissions can point to the same file, in which case two duplicates of the bot will play against each other.
-        The <a href="https://en.wikipedia.org/wiki/Random_seed" target="_blank">seed</a> that is used for this match is random unless explicitly specified using <code>--seed</code>.
+        The <a href="https://en.wikipedia.org/wiki/Random_seed" target="_blank">seed</a> that is used for this match is random unless explicitly specified by <code>--seed</code>.
+        The total time limit per bot is set to 30 seconds, except if specified by <code>--time</code>. Setting this to a low value makes debugging much easier.
         The result of the game is then further processed by either writing it to a file (specified by <code>--file</code>) or starting a local web server.
         This local web server is used to visualize the result recently generated. It will start on the specified port or on 8080 (the default). Immediately after, this visualization is opened in your browser.
         A stored game result file can later be viewed using the runner by specifying the game result file as argument, which will open the same local web server.
@@ -80,8 +82,8 @@
         &nbsp;&nbsp;&nbsp;&nbsp;"dotnet build -c Release $dir"<br>
         &nbsp;&nbsp;],<br>
         &nbsp;&nbsp;"csharp-run": "dotnet run -c Release --no-build --project $dir",<br>
-        &nbsp;&nbsp;"java-compile": "javac $source -d $dir",<br>
-        &nbsp;&nbsp;"java-run": "java -cp $classpath $main",<br>
+        &nbsp;&nbsp;"java-compile": "javac -encoding UTF-8 $source -d $dir",<br>
+        &nbsp;&nbsp;"java-run": "java -Dfile.encoding=UTF-8 -XX:+UseSerialGC -cp $classpath $main",<br>
         &nbsp;&nbsp;"python-compile": "C:\\ProgramData\\Anaconda3\\python -m py_compile $source",<br>
         &nbsp;&nbsp;"python-run": "C:\\ProgramData\\Anaconda3\\python $file"<br>
         }

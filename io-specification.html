@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DTC: I/O specification</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <a href="index.html">
+            <img src="logo.webp" alt="DTC Logo">
+        </a>
+        <h1>I/O specification</h1>
+    </header>
+
+    <p>
+        Communication between the game runner and your bot happens via the standard input and output streams. The example bots contain example code to handle input and output.
+    </p>
+    <p>
+        The communication protocol between the game runner and bots uses integers to index the pattern lines and displays. This indexing is visualized in the image below.
+        In addition to the 5 factory displays, the table center is considered an additional display with index 0.
+        Tiles can be placed on pattern lines as well as the floor line, which has index 5.
+    </p>
+    <p>
+        Tile colors are represented by single characters: g(reen), o(range), b(lue), y(ellow), and r(ed).
+    </p>
+    <img class="board" src="io-specification-indexing.webp" alt="Indexed example display of game state">
+
+    <h2>Protocol type</h2>
+    <p>
+        At the start of the game, your bot is required to write exactly one line with one of the following options: <samp>update</samp>, <samp>state</samp>, or <samp>both</samp>. These indicate the form of input the bot will receive at the start of their turn.
+    </p>
+    <p>
+        If you specify <samp>update</samp>, your bot will receive a list of updates describing what changed in the game state with respect to your previous turn.
+        Choosing <samp>state</samp> will have your bot receive a complete description of the game state at the start of your turn.
+        The option <samp>both</samp> will result in consecutively receiving all <samp>update</samp> information and then all <samp>state</samp> information.
+        The input should be completely read before writing any output.
+        Communication consists of lines composed of space-separated numbers or letters.
+    </p>
+
+    <h2>Input</h2>
+    <p>
+        Regardless of the chosen input form, the first line that is received each turn is a single number, which is the remaining computation time in milliseconds for your bot.
+        This is the time left for all your remaining turns and is similar to the remaining time on a chess clock in competitive matches.
+    </p>
+
+    <h3>Update protocol</h3>
+    <p>
+        This form of input starts with one line with a single number which represents the amount of updates that will be received as input.
+        Then for each update, a line with either <samp>restock</samp> or <samp>move</samp> follows, indicating the type of update which follows.
+    </p>
+
+    <h4>Restock</h4>
+    <p>
+        A <samp>restock</samp> update is received if the factory displays have been refilled since the last time your bot made a move.
+        It consists of a line for each of the factory displays (so 5 in total) which each contain 5 integers <i>f<sub>g</sub> f<sub>o</sub> f<sub>b</sub> f<sub>y</sub> f<sub>r</sub></i>. Each integer <i>f<sub>c</sub></i> on the <i>i</i>-th line equals the amount of color <i>c</i> that is present on display <i>i</i> after the restocking. Note that the table center always contains the starting player marker after a restocking and no other tiles.
+    </p>
+
+    <h4>Opponent move</h4>
+    <p>
+        A <samp>move</samp> update is received if the opponent took an action the previous turn by collecting tiles from a display.
+        The update consists of a single line with 3 integers <i>d c &#8467;</i> indicating that the opponent took all <i>c</i> colored tiles from display <i>d</i> and placed them on pattern line <i>&#8467;</i> (or the floor line in the case that <i>&#8467;</i>=5).
+        This matches with the output of your opponent's previous turn.
+    </p>
+
+    <h3>State protocol</h3>
+    <p>
+        First, one line of six integers <i>f<sub>g</sub> f<sub>o</sub> f<sub>b</sub> f<sub>y</sub> f<sub>r</sub> p</i> is received which represents the tiles present on the table center.
+        If the starting player marker is still located on the table center <i>p</i> will be equal to 1, and 0 otherwise.
+        Then, one line <i>f<sub>g</sub> f<sub>o</sub> f<sub>b</sub> f<sub>y</sub> f<sub>r</sub></i> follows for each factory display.
+        Similarly to the input for the <samp>restock</samp> update, each integer <i>f<sub>c</sub></i> on the <i>i</i>-th line equals the amount of color <i>c</i> that is present on display <i>i</i> after the restocking (the six integer line is considered the 0-th line and corresponds to the contents of the table center).
+    </p>
+    <p>
+        Then, a line with one of the following strings is received: <samp>you</samp>, <samp>opponent</samp>, or <samp>none</samp>. This indicates which player has picked the starting player marker (which is now on their floor line), or <samp>none</samp> if it is still on the table center.
+    </p>
+    <p>
+        Then for both players, starting with you, the following information is presented.
+    </p>
+
+    <h4>Player-specific state</h4>
+    <p>
+        A line for each of the player's pattern lines follows, each consisting of an integer <i>n</i> and character <i>c</i>.
+        The <i>i</i>-th line (starting from 0) specifies that there are <i>n</i> tiles of the color <i>c</i> on the <i>i</i>-th pattern line (with length <i>i</i>) of the player.
+        If the pattern line is empty, this will be represented by "<samp>0 .</samp>".
+    </p>
+    <p>
+        Next, you will receive a line for each of the 5 rows of the wall, each having 5 characters.
+        The <i>i</i>-th character on the <i>j</i>-th row is the color of the tile at the <i>i</i>-th position from the left and <i>j</i>-th position from the top or "<samp>.</samp>" if there is no tile at that position.
+    </p>
+    <p>
+        Finally, a last line with two integers is sent, which respectively represent the length of the floor line and score of the player.
+    </p>
+
+    <h3>Example input</h3>
+    <p>
+        The following example shows the input that would be sent in the scenario where the top board in the image corresponds to your bot. The game state at the start of your turn is as shown in the image.
+        For this example, we assume that you chose to receive <samp>both</samp> forms of input.
+    </p>
+    <p>
+        Example interactions can be generated by using the game runner to make two example bots play against each other.
+    </p>
+    <img class="board" src="io-specification-example-state.webp" alt="Indexed example display of game state">
+    <div class="code">
+        28220&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">There is 28.22s computation time left for your turns</span><br>
+        1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">Exactly 1 update will follow</span><br>
+        move&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">The next update is of type 'move'</span><br>
+        0 g 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">Your opponent collected all green tiles from the table center and placed them on their 0-th floor line (one line)</span><br>
+        0 0 1 1 0 0&nbsp;&nbsp;<span class="explanation">There is 1 blue and 1 yellow tile on the table center and no other tiles ...</span><br>
+        0 0 0 0 0<br>
+        0 1 1 1 1<br>
+        1 1 1 0 1<br>
+        0 1 1 1 1<br>
+        0 0 0 0 0<br>
+        opponent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">Your opponent has the starting player marker</span><br>
+        0 .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">Your 0-th pattern line contains no tiles</span><br>
+        2 r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">Your 1-st pattern line contains 2 red tiles ...</span><br>
+        0 .<br>
+        2 b<br>
+        3 g<br>
+        . . b y .&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">The uppermost row of your wall contains blue and yellow tiles ...</span><br>
+        . . o b .<br>
+        . . . o b<br>
+        . . . . .<br>
+        . . . . .<br>
+        0 7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">You have 0 tiles on your floor line and a current score of 7</span><br>
+        1 g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">The 0-th pattern line of your opponent's board contains 1 green tile ...</span><br>
+        0 .<br>
+        2 g<br>
+        3 y<br>
+        3 y<br>
+        . o . . .&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">The uppermost row of your opponent's wall contains an orange tile ...</span><br>
+        . g o . .<br>
+        y . . . .<br>
+        . . r . .<br>
+        . . . . .<br>
+        1 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="explanation">Your opponent has 1 tile on their floor line and a current score of 6</span>
+    </div>
+    <p>
+        Note that lines 2&#8211;4 are part of the <samp>update</samp> protocol, while lines 5&#8211;33 are part of the <samp>state</samp> protocol. If you had chosen one of the two (instead of <samp>both</samp>), the other would be omitted from the input.
+    </p>
+
+    <h2>Output</h2>
+    <p>
+        Before the first turn the bot should send their desired input form as previously described.
+        In all other turns, a bot ends their turn by writing a single line to the standard output stream consisting of three numbers <i>d c &#8467;</i>. This means that their move is to take all <i>c</i> colored tiles from display <i>d</i> and place them on pattern line <i>&#8467;</i> (or the floor line in the case that <i>&#8467;</i>=5).
+    </p>
+    <p>
+        Note that it is required to take at least one tile, which cannot only be the starting player marker.
+        A game state without legal moves will never occur.
+        (Specifically, the special case where only the starting player marker is left on the table center will never occur.)
+    </p>
+
+    <h2>Debug information</h2>
+    <p>
+        In addition to the chosen actions sent through the standard output stream, your bot can log debug information through the standard error stream at any time.
+        For each of the supported languages, this can be done as follows:
+    </p>
+    <ul>
+        <li>C#: <span class="code">Console.Error.WriteLine("debug");</span></li>
+        <li>Java: <span class="code">System.err.println("debug");</span></li>
+        <li>Python: <span class="code">import sys</span> and <span class="code">print("debug", file=sys.stderr)</span></li>
+    </ul>
+    <p>
+        For each move, the corresponding debug information is shown to the right of the visualization.
+        The debug information sent by your bot in the actual competition will be exclusively shown to members of your team.
+    </p>
+
+</body>
+</html>

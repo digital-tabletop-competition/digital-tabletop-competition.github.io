@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DTC: Game rules</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <a href="index.html">
+            <img src="logo.webp" alt="DTC Logo">
+        </a>
+        <h1>Game rules</h1>
+    </header>
+
+    <p>
+        Your bot will play 1v1 matches of the board game Azul against other bots. Below, the rules and visualization of this game are explained.
+    </p>
+    <p>
+        <i>Azul is designed by Michael Kiesling and published by <a href="https://planbgames.com" target="_blank">Plan B Games Inc.</a></i>
+    </p>
+
+    <h2>Layout</h2>
+    <img class="board" src="game-rules-board-marked.webp" alt="Marked example of the board">
+    <p>
+        Each player has their own board [A]. Each board consists of pattern lines [B], a wall [C], and a floor line [D]. There's also a space for your team's name [E] and score [F].
+        Next to the two player boards, there are 5 factory displays [G] and the table center [H].
+    </p>
+    <p>
+        In total, 100 tiles are present in the game, 20 of each color: green, orange, blue, yellow, and red. Every round the factory displays are restocked with 4 tiles each.
+        <!-- In case all factory displays are filled with 4 tiles of the same color, the factory displays are refilled. -->
+        An additional tile called the starting player marker [I] is put in the table center every round.
+        All tiles not shown on the boards or the table are stored in the bag (not shown).
+    </p>
+
+    <h2>Objective</h2>
+    <p>
+        The goal is to score the greatest number of points by filling your wall with tiles. The player who first completes a horizontal line of 5 tiles on their wall ends the game.
+    </p>
+
+    <h2>Gameplay</h2>
+    <p>
+        The game consists of multiple rounds, which in turn consist of three phases:
+    </p>
+    <ol>
+        <li>Tile collection</li>
+        <li>Wall tiling</li>
+        <li>Restocking</li>
+    </ol>
+
+    <h3>Tile collection</h3>
+    <p>
+        During this phase, you try to complete as many pattern lines as possible by picking tiles from factory displays and the table center.
+        <!-- During the next phase (wall tiling) you will only be able to move tiles from completed pattern lines on your wall to score points. -->
+        The phase ends when all factory displays <i>and</i> the table center are empty, which is when the wall tiling phase starts.
+    </p>
+    <p>
+        Picking tiles can be done in two ways:
+    </p>
+    <ol>
+        <li>Pick <i>all tiles of the same color</i> from one of the factory displays. The remaining tiles from that factory display are moved to the table center.</li>
+        <li>Pick <i>all tiles of the same color</i> from the table center. If you are the first to do so, you must also take the starting player marker. This will be placed onto the leftmost free space on your floor line. Note that you may never <i>only</i> pick the starting player marker.</li>
+    </ol>
+    <p>
+        After you have chosen your tiles, you pick 1 of the 5 pattern lines on your board and add the tiles <i>one by one, from left to right</i> to your chosen pattern line.
+        Keep in mind that the first line can hold 1 tile, the second 2, etc.
+    </p>
+    <p>
+        If the chosen pattern line is already partly filled with tiles, you are only allowed to add tiles of the <i>same color</i> to it.
+    </p>
+    <p>
+        Once a pattern line is completely filled, that line is complete and no more tiles can be added to it. Any leftover tiles you may still have from picking them from the table center or factory displays are placed on the floor line, from <i>left to right</i>. For more information see the section on the floor line.
+    </p>
+    <p>
+        In later rounds, an additional rule holds when placing tiles on the pattern lines: if the corresponding row on your wall already holds a tile of the color you have chosen, you may not place the tiles you picked on that pattern line.
+    </p>
+
+    <h4>Floor line</h4>
+    <p>
+        Tiles you picked that cannot be placed on your pattern lines must be placed on your floor line, from left to right.
+        In fact, you are always allowed to do so.
+        These tiles will deduct points during the wall tiling phase.
+    </p>
+    <p>
+        If your floor line is already completely filled (i.e., 7 tiles are present on the floor line) any additional tiles are discarded and do <i>not</i> deduct additional points.
+    </p>
+
+    <h3>Wall tiling</h3>
+    <p>
+        In this phase, tiles are moved from complete pattern lines to the wall. This is carried out simultaneously by all players
+    </p>
+    <p>
+        From <i>top to bottom</i>, a tile from each complete pattern line is moved to the space of the same color in the corresponding row of the wall. The other tiles on that pattern line are returned to the bag (in case of the first line, there are no other tiles).
+        Complete pattern lines are thus emptied, while incomplete pattern lines remain partly filled for the next round.
+    </p>
+    <p>
+        After a tile is moved to the wall, you earn points depending on its placement:
+    </p>
+    <ul>
+        <li>If no tiles are directly adjacent (either horizontally or vertically) to the newly placed tile, you earn 1 point.</li>
+        <li>If there are only horizontally adjacent tiles, you earn points equal to the number of horizontally connected tiles (including the newly placed one).</li>
+        <li>If there are only vertically adjacent tiles, you earn points equal to the number of vertically connected tiles (including the newly placed one).</li>
+        <li>If there are both horizontally and vertically adjacent tiles, you earn points equal to the sum of points given by the previous two cases.</li>
+    </ul>
+    <p>
+        For an example of this calculation, please inspect a game played between the provided example bots.
+    </p>
+    <p>
+        After all pattern lines are processed, the floor line is checked as well. For each tile on the floor line, a specific number of points is deducted. See the picture below for these amounts (from left to right: -1, -1, -2, -2, -2, -3, -3). All these tiles return to the bag.
+        The total number of points cannot drop below 0.
+    </p>
+    <img class="board" src="game-rules-floor-line.webp" alt="Marked example of the board">
+
+    <h3>Restocking</h3>
+    <p>
+        If after the wall tiling phase neither walls contain a complete row, the next round starts.
+        The empty factory displays are filled with 4 random tiles from the bag. Furthermore, the starting player marker is put in the table center again.
+    </p>
+
+    <h2>End of the game</h2>
+    <p>
+        If after the wall tiling phase one or both walls contain a complete row, the game ends.
+        Then, additional points are scored when the following goals have been achieved:
+    </p>
+    <ul>
+        <li>For each complete row on the wall, you earn 2 points.</li>
+        <li>For each complete column on the wall, you earn 7 points.</li>
+        <li>For each color of which all 5 tiles are placed on the wall, you earn 10 points.</li>
+    </ul>
+    <p>
+        The player with the greatest number of points wins the game.
+        In case of a tie, the player with more complete horizontal lines on their wall wins the game.
+        If the tie is not broken after this, the victory is shared.
+    </p>
+
+</body>
+</html>
